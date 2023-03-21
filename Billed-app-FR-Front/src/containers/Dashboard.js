@@ -95,16 +95,11 @@ export default class {
   };
 
   handleEditTicket(e, bill, bills) {
-    console.log("Here");
-    console.log(this.counter);
-
     if (this.counter === undefined || this.id !== bill.id) {
-      console.log("check counter");
       this.counter = 0;
     }
 
     if (this.id === undefined || this.id !== bill.id) {
-      console.log("check bills");
       this.id = bill.id;
     }
 
@@ -115,7 +110,6 @@ export default class {
       $(`#open-bill${bill.id}`).css({ background: "#2A2B35" });
       $(".dashboard-right-container div").html(DashboardFormUI(bill));
       $(".vertical-navbar").css({ height: "150vh" });
-      this.counter++;
     } else {
       $(`#open-bill${bill.id}`).css({ background: "#0D5AE5" });
 
