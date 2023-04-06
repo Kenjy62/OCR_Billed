@@ -18,5 +18,3 @@ Test & debug a SaSS
 
 > ReactJS for frontend
 
-<br>
-<font size="10"><p align="center"><a href="https://kenjy62.github.io/OCR_OhMyFood">Démonstration</a></p></font>
