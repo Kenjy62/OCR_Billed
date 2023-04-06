@@ -94,31 +94,59 @@ export default class {
       $("#modaleFileAdmin1").modal("show");
   };
 
+  // handleEditTicket(e, bill, bills) {
+  //   if (this.counter === undefined || this.id !== bill.id) {
+  //     this.counter = 0;
+  //   }
+
+  //   if (this.id === undefined || this.id !== bill.id) {
+  //     this.id = bill.id;
+  //   }
+
+  //   if (this.counter === 0) {
+  //     bills.forEach((b) => {
+  //       $(`#open-bill${b.id}`).css({ background: "#0D5AE5" });
+  //     });
+  //     $(`#open-bill${bill.id}`).css({ background: "#2A2B35" });
+  //     $(".dashboard-right-container div").html(DashboardFormUI(bill));
+  //     $(".vertical-navbar").css({ height: "150vh" });
+  //   } else {
+  //     $(`#open-bill${bill.id}`).css({ background: "#0D5AE5" });
+
+  //     $(".dashboard-right-container div").html(`
+  //       <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
+  //     `);
+  //     $(".vertical-navbar").css({ height: "120vh" });
+  //     this.counter = 0;
+  //   }
+  //   $("#icon-eye-d").click(this.handleClickIconEye);
+  //   $("#btn-accept-bill").click((e) => this.handleAcceptSubmit(e, bill));
+  //   $("#btn-refuse-bill").click((e) => this.handleRefuseSubmit(e, bill));
+  // }
+
   handleEditTicket(e, bill, bills) {
-    if (this.counter === undefined || this.id !== bill.id) {
-      this.counter = 0;
-    }
-
-    if (this.id === undefined || this.id !== bill.id) {
-      this.id = bill.id;
-    }
-
-    if (this.counter === 0) {
-      bills.forEach((b) => {
-        $(`#open-bill${b.id}`).css({ background: "#0D5AE5" });
-      });
+    if ((this.counter === 1) & (this.id != bill.id)) {
       $(`#open-bill${bill.id}`).css({ background: "#2A2B35" });
       $(".dashboard-right-container div").html(DashboardFormUI(bill));
       $(".vertical-navbar").css({ height: "150vh" });
-    } else {
-      $(`#open-bill${bill.id}`).css({ background: "#0D5AE5" });
-
-      $(".dashboard-right-container div").html(`
-        <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
-      `);
+      this.id = bill.id;
+    } else if (this.counter === 1 && this.id === bill.id) {
+      bills.forEach((b) => {
+        $(`#open-bill${b.id}`).css({ background: "#0D5AE5" });
+      });
+      $(".dashboard-right-container div").html(
+        `<div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>`
+      );
       $(".vertical-navbar").css({ height: "120vh" });
-      this.counter = 0;
+      this.id = undefined;
     }
+
+    bills.forEach((b) => {
+      if (b.id != bill.id) {
+        $(`#open-bill${b.id}`).css({ background: "#0D5AE5" });
+      }
+    });
+
     $("#icon-eye-d").click(this.handleClickIconEye);
     $("#btn-accept-bill").click((e) => this.handleAcceptSubmit(e, bill));
     $("#btn-refuse-bill").click((e) => this.handleRefuseSubmit(e, bill));
@@ -145,12 +173,8 @@ export default class {
   };
 
   handleShowTickets(e, bills, index) {
-    if (this.counter === undefined || this.index !== index) {
-      this.counter = 0;
-    }
-    if (this.index === undefined || this.index !== index) {
-      this.index = index;
-    }
+    if (this.counter === undefined || this.index !== index) this.counter = 0;
+    if (this.index === undefined || this.index !== index) this.index = index;
     if (this.counter % 2 === 0) {
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(0deg)" });
       $(`#status-bills-container${this.index}`).html(
@@ -160,12 +184,15 @@ export default class {
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(90deg)" });
       $(`#status-bills-container${this.index}`).html("");
+      this.counter++;
     }
 
+    // fix : open tickets in the list (wrong query selector modified)
     bills.forEach((bill) => {
-      $(`#open-bill${bill.id}`).click((e) => {
-        this.handleEditTicket(e, bill, bills);
-      });
+      // $(`#open-bill${bill.id}`).click((e) => // ORIGINAL
+      $(`#status-bills-container${index} #open-bill${bill.id}`).click((e) =>
+        this.handleEditTicket(e, bill, bills)
+      );
     });
 
     return bills;

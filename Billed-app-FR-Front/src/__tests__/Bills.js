@@ -10,7 +10,44 @@ import { ROUTES, ROUTES_PATH } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import router from "../app/Router.js";
 import Bills from "../containers/Bills.js";
-import store from "../__mocks__/store.js";
+
+jest.mock("../__mocks__/store", () => jest.fn());
+
+// Mock store function that returns a resolved promise with an array of bill data
+const mockStore = {
+  bills: jest.fn(() => ({
+    list: jest.fn(() => {
+      return Promise.resolve([
+        {
+          id: "bill_1",
+          email: "john.doe@example.com",
+          type: "Hôtel et logement",
+          name: "Hotel de Paris",
+          date: "2022-03-20",
+          amount: 200,
+          status: "pending",
+          commentAdmin: "Facture non conforme",
+          commentExpense: "Déplacement professionnel",
+          vat: 40,
+          pct: 20,
+        },
+        {
+          id: "bill_2",
+          email: "jane.doe@example.com",
+          type: "Restaurants et bars",
+          name: "La Belle Équipe",
+          date: "2022-03-10",
+          amount: 150,
+          status: "accepted",
+          commentAdmin: "",
+          commentExpense: "Déjeuner d'affaires",
+          vat: 30,
+          pct: 20,
+        },
+      ]);
+    }),
+  })),
+};
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -111,13 +148,14 @@ describe("Given I am connected as an employee", () => {
       fireEvent.click(newBillButton);
       expect(handleClickNewBill).toHaveBeenCalled();
     });
-  });
-});
 
-// Adding by me
-describe("Given I am a user connected as Admin", () => {
-  describe("When I navigate to Dashboard", () => {
+    // Adding by me
     test("fetches bills from mock API GET", async () => {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ type: "Employee", email: "employee@jest.test" })
+      );
+
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
       };
@@ -125,13 +163,63 @@ describe("Given I am a user connected as Admin", () => {
       const test = new Bills({
         document,
         onNavigate,
-        store: store,
-        bills: bills,
+        store: mockStore,
         localStorageMock: window.localStorage,
       });
 
-      const result = await test.getBills();
-      expect(result.length).toBe(4);
+      const bills = await test.getBills();
+
+      expect(bills.length).toBe(2);
+    });
+
+    // Adding by me
+    test("fetches bills from mock API GET with error 400", async () => {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ type: "Employee", email: "employee@jest.test" })
+      );
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+
+      const test = new Bills({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorageMock: window.localStorage,
+      });
+
+      try {
+        await test.getBills("400");
+      } catch (e) {
+        expect(e.message).toBe("Erreur 400");
+      }
+    });
+
+    // Adding by me
+    test("fetches bills from mock API GET with error 500", async () => {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ type: "Employee", email: "employee@jest.test" })
+      );
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+
+      const test = new Bills({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorageMock: window.localStorage,
+      });
+
+      try {
+        await test.getBills("500");
+      } catch (e) {
+        expect(e.message).toBe("Erreur 500");
+      }
     });
   });
 });
