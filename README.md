@@ -18,3 +18,34 @@ Test & debug a SaSS
 
 > ReactJS for frontend
 
+# How to Install
+
+In terminal : 
+
+```bash 
+git clone https://github.com/Kenjy62/OCR_Billed
+```
+```bash 
+cd OCR_Billed/Billed-app-FR-back
+```
+```bash 
+npm install
+```
+```bash 
+node server
+```
+
+Back to /
+
+```bash 
+cd OCR_Billed/Billed-app-FR-front
+```
+```bash 
+npm install
+```
+```bash 
+npm install -g live-server
+```
+```bash 
+live-server
+```
